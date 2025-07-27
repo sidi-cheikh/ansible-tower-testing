@@ -1,0 +1,41 @@
+
+- name: Updating the job template {{template.name}}
+  debug:
+    var: template.name
+
+- name: debug
+  debug:
+    msg:
+    - old cred id {{old_cred_details.id}}
+    - new cred id {{new_cred_details.id}}
+
+- name: Diassociating old credential {{old_cred_details.name}}
+  uri:
+    url: "{{ tower_api_base_url }}/job_templates/{{template.id}}/credentials/"
+    method: POST
+    headers:
+      Authorization: "{{auth_header}}"
+      Content-Type: "application/json"
+    body: >
+      {
+        "id": {{ old_cred_details.id | int }},
+        "disassociate": true
+      }
+    body_format: json
+    status_code: 204
+    validate_certs: false
+
+- name: Associating new credential {{new_cred_details.name}}}
+  uri:
+    url: "{{ tower_api_base_url }}/job_templates/{{template.id}}/credentials/"
+    method: POST
+    headers:
+      Authorization: "{{auth_header}}"
+      Content-Type: "application/json"
+    body: >
+      {
+       "id": {{ new_cred_details.id | int }}
+      }
+    body_format: json
+    status_code: 204
+    validate_certs: false

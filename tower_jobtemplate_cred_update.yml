@@ -1,0 +1,123 @@
+---
+- hosts: localhost
+  gather_facts: no 
+  become: false
+  vars:
+    tower_api_base_url : "https://192.168.242.128/api/v2"
+    credential_name: old_cred
+    new_credential_name: new_cred
+    #username: apiusername
+    #password: apipassword
+    #auth_token: towerauthtoken
+    #template_names: 
+    #  - test_template1
+
+  tasks:
+  - name: Set Auth header to Bearer token 
+    set_fact:
+      auth_header : "Bearer {{ auth_token }}"
+    when:
+      - auth_token is defined
+
+  - name: Set Basic Auth header if username and password are provided and Auth token is not provided
+    set_fact:
+      auth_header : "Basic {{ (username + ':' + password) | b64encode }}"
+    when: 
+      - auth_token is undefined
+      - username is defined
+      - password is defined
+
+  - name: exit with failure status if neither auth token nor username and passowrd is provided
+    fail: 
+      msg: "Missing auth token or username and password: please provide either an `auth_token` or a `username` and `password` to use for Api authentication"
+    when: auth_header is undefined
+
+  - name: geting the {{item}} credentials details - GET {{ tower_api_base_url }}//credentials?name={{item}}
+    uri:
+      url: "{{ tower_api_base_url }}//credentials?name={{item}}"
+      method: GET
+      headers:
+        Authorization: "{{auth_header}}"
+        Content-Type: "application/json"
+      return_content: yes
+      status_code: 200
+      validate_certs: false
+    register: get_creds_response
+    loop:
+       - "{{credential_name}}"
+       - "{{new_credential_name}}"
+    
+
+  - name: extracting details of {{credential_name}}
+    set_fact:
+      old_cred_details: "{{ get_creds_response.results[0].json.results[0] }}"
+    when:
+      get_creds_response.results[0].json.results | length > 0
+
+  - name: extracting details of {{new_credential_name}}
+    set_fact:
+      new_cred_details: "{{ get_creds_response.results[1].json.results[0] }}"
+    when:
+      get_creds_response.results[1].json.results | length > 0
+
+  - name: Fail if credential {{credential_name}} not found
+    fail:
+      msg: Cloud not find a credential named {{credential_name}}
+    when:
+      old_cred_details is undefined
+
+  - name: Fail if credential {{new_credential_name}} not found
+    fail:
+      msg: Cloud not find a credential named {{new_credential_name}}
+    when:
+      new_cred_details is undefined
+    
+
+  - name: get the job templates - GET {{ tower_api_base_url }}/job_templates?credentials_name={{credential_name}}
+    uri:
+      url: "{{ tower_api_base_url }}/job_templates?credentials__name={{credential_name}}"
+      method: GET
+      headers:
+        Authorization: "{{auth_header}}"
+        Content-Type: "application/json"
+      return_content: yes
+      status_code: 200
+      validate_certs: false
+    register: response
+
+  - name: extract response.json
+    set_fact:
+      job_templates: "{{ response.json.results }}"
+    when: response.json.results | length  > 0 
+
+  - name: Exsiting - Couldn't find any job templates using the credetial {{ credential_name }}
+    meta: end_play 
+    when: job_templates is undefined
+
+  - name: filtring on the provided template_names
+    set_fact:
+      job_templates: "{{ job_templates | selectattr('name', 'in', template_names)}}"
+
+  - name: "Total job templates to update"
+    debug:
+      msg: "{{ job_templates | length }} Template(s)"
+
+  - name: "Display template names"
+    debug:
+      msg: 
+        - the follwoing job templates will be updated
+        - "{{job_templates | community.general.json_query('[*].name')}}"
+
+  - name: "Updating the job templates"
+    include_tasks:
+      file: tower_jobtemplate_cred_update__sub_tasks.yml
+    loop: "{{job_templates}}"
+    loop_control: 
+      loop_var: template
+
+
+    
+
+  
+
+  
