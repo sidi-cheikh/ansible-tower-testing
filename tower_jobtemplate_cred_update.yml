@@ -3,13 +3,13 @@
 #  Ansible playbook to perform mass updates on Ansible Tower job templates to replace
 #  an existing credential with a new one.
 #  The playbook is intended to be run as a job template from within Ansible Tower and should 
-#  use a credential of type "Ansible Tower", which includes the Tower URL and either API token or a username and password 
-#  for authenticating with the Tower API.
+#  use a credential of type "Ansible Tower", which includes the Tower URL and either API token 
+#  or a username and password for authenticating with the Tower API.
 #
 # The playbook accept the following variables:
-#   "credential_name":      (Required) The name of the credential to be replaced.
-#   "new_credential_name":  (Required) The name of the new credential that will replace the existing one.
-#   "template_names":       (Optional): A list of job template names to update. If provided, only the specified templates 
+#   "credential_name":      *(Required) The name of the credential to be replaced.
+#   "new_credential_name":  *(Required) The name of the new credential that will replace the existing one.
+#   "template_names":       (Optional) A list of job template names to update. If provided, only the specified templates 
 #                           will be updated. If not provided, the script will update all existing job templates that use credential_name, 
 #                           replacing it with new_credential_name
 #
