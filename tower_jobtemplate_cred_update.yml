@@ -13,6 +13,11 @@
     #  - test_template1
 
   tasks:
+
+  - name: debug env
+    debug:
+      var: env
+
   - name: Set Auth header to Bearer token 
     set_fact:
       auth_header : "Bearer {{ auth_token }}"
