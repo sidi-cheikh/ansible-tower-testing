@@ -3,16 +3,16 @@
   gather_facts: no 
   become: false
   vars:
-    credential_name: old_cred
-    new_credential_name: new_cred
+    # credential_name: new_cred   
+    # new_credential_name: old_cred
     tower_host: '{{ lookup("env", "TOWER_HOST") }}'
     tower_username: '{{ lookup("env", "TOWER_USERNAME") }}'
     tower_password: '{{ lookup("env", "TOWER_PASSWORD") }}'
     tower_oauth_token: '{{ lookup("env", "TOWER_OAUTH_TOKEN") }}'
     tower_api_base_url : "{{tower_host}}/api/v2"
-    template_names: 
-      - test_template1
-      - test_template2
+    # template_names: 
+    #   - test_template1
+    #   - test_template2
 
   tasks:
   - name: Set Auth header to Bearer token 
@@ -74,7 +74,6 @@
     when:
       new_cred_details is undefined
     
-
   - name: get the job templates - GET {{ tower_api_base_url }}/job_templates?credentials_name={{credential_name}}
     uri:
       url: "{{ tower_api_base_url }}/job_templates?credentials__name={{credential_name}}"

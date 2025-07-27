@@ -3,13 +3,7 @@
   debug:
     var: template.name
 
-- name: debug
-  debug:
-    msg:
-    - old cred id {{old_cred_details.id}}
-    - new cred id {{new_cred_details.id}}
-
-- name: Diassociating old credential {{old_cred_details.name}}
+- name: "{{template.name}} -> Diassociating old credential {{old_cred_details.name}}"
   uri:
     url: "{{ tower_api_base_url }}/job_templates/{{template.id}}/credentials/"
     method: POST
@@ -25,7 +19,7 @@
     status_code: 204
     validate_certs: false
 
-- name: Associating new credential {{new_cred_details.name}}}
+- name: "{{template.name}} -> Associating new credential {{new_cred_details.name}}"
   uri:
     url: "{{ tower_api_base_url }}/job_templates/{{template.id}}/credentials/"
     method: POST
