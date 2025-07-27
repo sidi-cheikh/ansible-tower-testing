@@ -6,9 +6,10 @@
     tower_api_base_url : "https://192.168.242.128/api/v2"
     credential_name: old_cred
     new_credential_name: new_cred
-    #username: apiusername
-    #password: apipassword
-    #auth_token: towerauthtoken
+    #tower_host: '{{ lookup("env", "TOWER_HOST") }}'
+    #tower_username: '{{ lookup("env", "TOWER_USERNAME") }}'
+    #tower_password: '{{ lookup("env", "TOWER_PASSWORD") }}'
+    #tower_token: '{{ lookup("env", "TOWER_TOKEN") }}'
     #template_names: 
     #  - test_template1
 
