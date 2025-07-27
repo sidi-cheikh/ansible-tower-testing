@@ -12,6 +12,7 @@
     tower_api_base_url : "{{tower_host}}/api/v2"
     template_names: 
       - test_template1
+      - test_template2
 
   tasks:
   - name: Set Auth header to Bearer token 
@@ -98,6 +99,7 @@
   - name: filtring on the provided template_names
     set_fact:
       job_templates: "{{ job_templates | selectattr('name', 'in', template_names)}}"
+    when: template_names is defined
 
   - name: "Total job templates to update"
     debug:
@@ -107,7 +109,7 @@
     debug:
       msg: 
         - the follwoing job templates will be updated
-        - "{{job_templates | community.general.json_query('[*].name')}}"
+        - "{{job_templates | map(attribute='name')}}"
 
   - name: "Updating the job templates"
     include_tasks:
