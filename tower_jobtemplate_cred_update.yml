@@ -9,20 +9,11 @@
     tower_username: '{{ lookup("env", "TOWER_USERNAME") }}'
     tower_password: '{{ lookup("env", "TOWER_PASSWORD") }}'
     tower_oauth_token: '{{ lookup("env", "TOWER_OAUTH_TOKEN") }}'
-    tower_api_base_url : "{{tower_host}} + '/api/v2'"
+    tower_api_base_url : "{{tower_host}}/api/v2"
     template_names: 
       - test_template1
 
   tasks:
-
-  - name: run env command 
-    command: env
-    register: env
-
-  - name: debug env
-    debug:
-      var: env
-
   - name: Set Auth header to Bearer token 
     set_fact:
       auth_header : "Bearer {{ tower_oauth_token }}"
@@ -44,7 +35,7 @@
 
   - name: geting the {{item}} credentials details - GET {{ tower_api_base_url }}/credentials?name={{item}}
     uri:
-      url: "{{ tower_api_base_url }}//credentials?name={{item}}"
+      url: "{{ tower_api_base_url }}/credentials?name={{item}}"
       method: GET
       headers:
         Authorization: "{{auth_header}}"
