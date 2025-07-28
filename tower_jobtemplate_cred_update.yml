@@ -1,4 +1,5 @@
 ---
+#########################################################################################
 # DESCRIPTION:
 #  Ansible playbook to perform mass updates on Ansible Tower job templates to replace
 #  an existing credential with a new one.
@@ -14,6 +15,7 @@
 #                           replacing it with new_credential_name
 #
 # Created 07/2025 by Sidi Cheikh
+#########################################################################################
 
 - hosts: localhost
   gather_facts: no 
@@ -31,6 +33,11 @@
     #   - test_template2
 
   tasks:
+
+#########################################################
+# Setting the API Auth Header
+#########################################################
+
   - name: Set Auth header to Bearer token 
     set_fact:
       auth_header : "Bearer {{ tower_oauth_token }}"
@@ -49,6 +56,10 @@
     fail: 
       msg: "Missing auth token or username and password: please provide either an `auth_token` or a `username` and `password` to use for Api authentication"
     when: auth_header is undefined
+
+##########################################################
+# Getting the credentials details
+##########################################################
 
   - name: geting the {{item}} credentials details - GET {{ tower_api_base_url }}/credentials?name={{item}}
     uri:
@@ -90,6 +101,10 @@
     when:
       new_cred_details is undefined
     
+############################################################
+# Getting the list of job templates to update
+############################################################
+
   - name: get the job templates - GET {{ tower_api_base_url }}/job_templates?credentials_name={{credential_name}}
     uri:
       url: "{{ tower_api_base_url }}/job_templates?credentials__name={{credential_name}}"
@@ -125,6 +140,11 @@
       msg: 
         - the follwoing job templates will be updated
         - "{{job_templates | map(attribute='name') | list}}"
+
+
+###########################################################
+# Updating the job templates
+###########################################################
 
   - name: "Updating the job templates"
     include_tasks:
