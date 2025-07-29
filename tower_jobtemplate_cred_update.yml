@@ -34,6 +34,10 @@
 
   tasks:
 
+  - name: debug: template_names
+    debug:
+      var: template_names
+
 #########################################################
 # Setting the API Auth Header
 #########################################################
