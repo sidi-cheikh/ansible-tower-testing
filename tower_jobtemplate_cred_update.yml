@@ -29,7 +29,7 @@
     # Extra variables that can be set from ansible tower:
     # credential_name: old_cred   
     # new_credential_name: new_cred
-    # template_names: |-
+    # template_names: 
     #  - job_template1
 
   tasks:
