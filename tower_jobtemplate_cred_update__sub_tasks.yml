@@ -1,3 +1,8 @@
+#####################################################################################
+# Description:
+#   Defines subtasks used by the main playbook "tower_jobtemplate_cred_update.yml". 
+#   It is intended to be used by the main playbook and should be kept in the same directory.
+######################################################################################
 
 - name: Updating the job template {{template.name}}
   debug:
