@@ -34,10 +34,6 @@
 
   tasks:
 
-  - name: debug template_names
-    debug:
-      var: template_names
-
 #########################################################
 # Setting the API Auth Header
 #########################################################
@@ -128,14 +124,6 @@
       job_templates: "{{ response.json.results }}"
     when: response.json.results | length  > 0 
 
-  - name: debug
-    debug:
-      var: job_templates
-
-  - name: debug
-    debug:
-      var: template_names
-
   - name: Exsiting - Couldn't find any job templates using the credetial {{ credential_name }}
     meta: end_play 
     when: job_templates is undefined
@@ -147,10 +135,6 @@
       - template_names is defined
       - template_names is not none
       - template_names | length > 0
-
-  - name: debug
-    debug:
-      var: job_templates
 
   - name: "2.3 - Total job templates to update"
     debug:
