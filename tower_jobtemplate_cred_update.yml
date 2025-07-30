@@ -148,6 +148,10 @@
       - template_names is not none
       - template_names | length > 0
 
+  - name: debug
+    debug:
+      var: job_templates
+
   - name: "2.3 - Total job templates to update"
     debug:
       msg: "{{ job_templates | length }} Template(s)"
