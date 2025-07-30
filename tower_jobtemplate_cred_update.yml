@@ -142,7 +142,7 @@
 
   - name: 2.2 - filtring on the provided template_names
     set_fact:
-      job_templates: "{{ job_templates | selectattr('name', 'in', template_names)}}"
+      job_templates: "{{ job_templates | selectattr('name', 'in', template_names) | list}}"
     when: 
       - template_names is defined
       - template_names is not none
