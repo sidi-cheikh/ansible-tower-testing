@@ -148,7 +148,7 @@
     debug:
       msg: 
         - the follwoing job templates will be updated
-        - "{{job_templates | map(attribute='name') }}"
+        - "{{job_templates | map(attribute='name') | list }}"
 
 
 ###########################################################
