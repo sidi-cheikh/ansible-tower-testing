@@ -128,6 +128,14 @@
       job_templates: "{{ response.json.results }}"
     when: response.json.results | length  > 0 
 
+  - name: debug
+    debug:
+      var: job_templates
+
+  - name: debug
+    debug:
+      var: template_names
+
   - name: Exsiting - Couldn't find any job templates using the credetial {{ credential_name }}
     meta: end_play 
     when: job_templates is undefined
